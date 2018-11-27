@@ -21,7 +21,6 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.CallAdapter;
 import retrofit2.Converter;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -48,7 +47,7 @@ public class HttpManager {
         DEBUG = debug;
     }
 
-    public static OkHttpClient getHttpClient(HttpLoggingInterceptor.Level level) {
+    public static OkHttpClient getHttpClient(HttpLogInterceptor.Level level) {
         OkHttpClient.Builder builder = sOkHttpClient.newBuilder();
         builder.connectTimeout(CONNECT_TIMEOUT, TimeUnit.MILLISECONDS);
         builder.readTimeout(READ_TIMEOUT, TimeUnit.MILLISECONDS);
@@ -59,7 +58,6 @@ public class HttpManager {
             } else {
                 builder.sslSocketFactory(sSslSocketFactory);
             }
-
             builder.hostnameVerifier(DO_NOT_VERIFY);
             if (sSslSocketFactory != null) {
 
@@ -70,22 +68,16 @@ public class HttpManager {
         } finally {
 
         }
-
         //allowAllSSL(builder);
-
         // 设置request 拦截器
         RequestInterceptor requestInterceptor = new RequestInterceptor();
         builder.addInterceptor(requestInterceptor);
 
         // 设置log拦截器
         if (DEBUG) {
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            // set your desired log leave
+            HttpLogInterceptor logging = new HttpLogInterceptor();
             logging.setLevel(level);
-            //logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
-            // add your other interceptors …
             builder.interceptors().add(logging);
-            // add logging as last interceptor
         }
         return builder.build();
     }
@@ -151,7 +143,6 @@ public class HttpManager {
                     }
                 }
         };
-
         // Install the all-trusting trust manager
         try {
             SSLContext sc = SSLContext.getInstance("TLS");
@@ -162,7 +153,6 @@ public class HttpManager {
         }
         return sslSocketFactory;
     }
-
 
     // always verify the host - dont check for certificate
     final static HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {
@@ -178,9 +168,7 @@ public class HttpManager {
         @Override
         public Response intercept(Chain chain) throws IOException {
             Request originalRequest = chain.request();
-
             Request compressedRequest = originalRequest.newBuilder()
-                    .header("X-Api-Version", "1.0.0")
                     .build();
             return chain.proceed(compressedRequest);
         }

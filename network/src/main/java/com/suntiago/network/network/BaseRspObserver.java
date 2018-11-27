@@ -1,9 +1,8 @@
 package com.suntiago.network.network;
 
 
-import android.util.Log;
-
 import com.suntiago.network.network.rsp.BaseResponse;
+import com.suntiago.network.network.utils.Slog;
 
 import org.json.JSONException;
 
@@ -44,7 +43,7 @@ public class BaseRspObserver<T> extends Subscriber<T> {
 
     @Override
     public void onError(Throwable e) {
-        Log.e(TAG, "onError:" + e);
+        Slog.e(TAG, "onError:" + e);
         e.printStackTrace();
         int code;
         String msg = "";
@@ -72,14 +71,14 @@ public class BaseRspObserver<T> extends Subscriber<T> {
                 onNext(t);
             }
         } catch (Exception e1) {
-            Log.e(TAG, "onError:" + e1);
+            Slog.e(TAG, "onError:" + e1);
             e1.printStackTrace();
         }
     }
 
     @Override
     public void onNext(T t) {
-        Log.d(TAG, "onNext");
+        Slog.d(TAG, "onNext");
         if (action != null) {
             action.call(t);
         }

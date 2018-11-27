@@ -7,7 +7,6 @@ import com.suntiago.network.network.utils.Slog;
 
 import java.util.HashMap;
 
-import okhttp3.logging.HttpLoggingInterceptor.Level;
 import retrofit2.Retrofit;
 
 public class Api {
@@ -56,7 +55,7 @@ public class Api {
             mApiObjects = new HashMap<>();
         }
         Retrofit retrofit = new Retrofit.Builder()
-                .client(HttpManager.getHttpClient(Level.BODY))
+                .client(HttpManager.getHttpClient(HttpLogInterceptor.Level.BODY))
                 .baseUrl(BASE_URL)
                 .addConverterFactory(HttpManager.sGsonConverterFactory)
                 .addCallAdapterFactory(HttpManager.sRxJavaCallAdapterFactory)
@@ -75,7 +74,7 @@ public class Api {
             mApiObjects = new HashMap<>();
         }
         Retrofit retrofit = new Retrofit.Builder()
-                .client(HttpManager.getHttpClient(Level.BODY))
+                .client(HttpManager.getHttpClient(HttpLogInterceptor.Level.BODY))
                 .baseUrl(baseUrl)
                 .addConverterFactory(HttpManager.sGsonConverterFactory)
                 .addCallAdapterFactory(HttpManager.sRxJavaCallAdapterFactory)
