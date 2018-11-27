@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -33,7 +34,7 @@ public class HttpManager {
 
     private static boolean DEBUG = true;
 
-    private static final int CONNECT_TIMEOUT =12000;
+    private static final int CONNECT_TIMEOUT = 12000;
     private static final int READ_TIMEOUT = 12000;
 
     private static OkHttpClient sOkHttpClient = new OkHttpClient();
@@ -47,7 +48,7 @@ public class HttpManager {
         DEBUG = debug;
     }
 
-    public static OkHttpClient getHttpClient(HttpLogInterceptor.Level level) {
+    public static OkHttpClient getHttpClient(HashMap<String, String> host, HttpLogInterceptor.Level level) {
         OkHttpClient.Builder builder = sOkHttpClient.newBuilder();
         builder.connectTimeout(CONNECT_TIMEOUT, TimeUnit.MILLISECONDS);
         builder.readTimeout(READ_TIMEOUT, TimeUnit.MILLISECONDS);
@@ -71,6 +72,9 @@ public class HttpManager {
         //allowAllSSL(builder);
         // 设置request 拦截器
         RequestInterceptor requestInterceptor = new RequestInterceptor();
+        if (host != null) {
+            requestInterceptor.setHost(host);
+        }
         builder.addInterceptor(requestInterceptor);
 
         // 设置log拦截器
@@ -80,6 +84,11 @@ public class HttpManager {
             builder.interceptors().add(logging);
         }
         return builder.build();
+    }
+
+
+    public static OkHttpClient getHttpClient(HttpLogInterceptor.Level level) {
+        return getHttpClient(null, level);
     }
 
     /**
@@ -165,11 +174,23 @@ public class HttpManager {
      * This interceptor compresses the HTTP request body. Many webservers can't handle this!
      */
     final static class RequestInterceptor implements Interceptor {
+
+        HashMap<String, String> host;
+
+        public void setHost(HashMap<String, String> host) {
+            this.host = host;
+        }
+
         @Override
         public Response intercept(Chain chain) throws IOException {
             Request originalRequest = chain.request();
-            Request compressedRequest = originalRequest.newBuilder()
-                    .build();
+            Request.Builder build = originalRequest.newBuilder();
+            if (host != null) {
+                for (String s : host.keySet()) {
+                    build.header(s, host.get(s));
+                }
+            }
+            Request compressedRequest = build.build();
             return chain.proceed(compressedRequest);
         }
     }
