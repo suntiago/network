@@ -33,10 +33,10 @@ public class Api {
 
     public static void init(Context context) {
         sContext = context;
-        Api.get().BASE_URL = SPUtils.getInstance(context).get("ip", Api.get().BASE_URL);
-        Api.get().UPDATE_HOST = SPUtils.getInstance(context).get("UPDATE_HOST", UPDATE_HOST);
-        Api.get().NETTY_HOST_PORT = SPUtils.getInstance(sContext).get("UPDATE_HOST_PORT", NETTY_HOST_PORT);
-        Api.get().mApiObjects.clear();
+        SPUtils sp = SPUtils.getInstance(context);
+        BASE_URL = sp.get("ip", Api.get().BASE_URL);
+        UPDATE_HOST = sp.get("UPDATE_HOST", UPDATE_HOST);
+        NETTY_HOST_PORT = sp.get("UPDATE_HOST_PORT", NETTY_HOST_PORT);
     }
 
 
@@ -120,7 +120,7 @@ public class Api {
                 .addCallAdapterFactory(HttpManager.sRxJavaCallAdapterFactory)
                 .build();
         addApiObjects(BASE_URL, tClass, retrofit.create(tClass));
-        return (T) mApiObjects.get(tClass);
+        return (T) getApiObjects(BASE_URL, tClass);
     }
 
     public synchronized <T> T getApi(Class<T> tClass, String baseUrl) {
@@ -135,7 +135,7 @@ public class Api {
                 .addCallAdapterFactory(HttpManager.sRxJavaCallAdapterFactory)
                 .build();
         addApiObjects(baseUrl, tClass, retrofit.create(tClass));
-        return (T) mApiObjects.get(tClass);
+        return (T) getApiObjects(baseUrl, tClass);
     }
 
     public void setApiConfig(String api, String netty_host, int netty_port) {
