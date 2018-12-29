@@ -83,7 +83,7 @@ public class UploadRepository {
             return;
         }
         //根据文件类型判断并加上后缀
-        name += getFileExtension(file);
+        //name += getFileExtension(file);
         if (!folder.endsWith("/")) folder += "/";
         name = folder + name;
         //转换百分号编码
