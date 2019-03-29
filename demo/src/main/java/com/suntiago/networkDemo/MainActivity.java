@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.suntiago.getpermission.rxpermissions.RxPermissions;
@@ -16,6 +17,8 @@ import com.suntiago.network.network.download.DownloadManager;
 import com.suntiago.network.network.utils.Slog;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 import rx.functions.Action1;
 
@@ -31,6 +34,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        WebView w = new WebView(this);
     }
 
     @Override
@@ -76,8 +80,12 @@ public class MainActivity extends Activity {
 
     //开始下载
     private void startDownload() {
-        String url = "https://ss2.baidu.com/6ONYsjip0QIZ8tyhnq/it/u=401714075," +
-                "168034038&fm=173&app=25&f=JPEG?w=640&h=360&s=05D1AB6C2D27261D8CB1C49E0300009B";
+        String url = "https://viroyalcampus.oss-cn-shanghai.aliyuncs.com/%E5%BE%AE%E6%9C%8D%E5%8A%A1/%E4%BF%A1%E6%81%AF%E5%8F%91%E5%B8%83/20190304/1551686307569.jpeg";
+        try {
+            url = URLDecoder.decode(url, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         DownloadEntry entry;
         if (dataChanger.containsDownloadEntry(url)) {
             entry = dataChanger.queryDownloadEntryByUrl(url);
