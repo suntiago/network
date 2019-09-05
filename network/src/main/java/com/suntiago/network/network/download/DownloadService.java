@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import java.io.File;
@@ -315,8 +316,9 @@ public class DownloadService extends Service {
         if (entry == null) {
             return;
         }
-        File file = new File(DownloadConfig.DOWNLOAD_PATH
-                + entry.url.substring(entry.url.lastIndexOf("/") + 1));
+        String fileName = TextUtils.isEmpty(entry.name) ? entry.url.substring(entry.url.lastIndexOf("/") + 1) : entry.name;
+        Slog.d(TAG, "DownloadService==>saveFileName" + fileName);
+        File file = new File(DownloadConfig.DOWNLOAD_PATH + fileName);
         if (file == null) {
             Slog.d(TAG, "checkDownloadPath  [entry file == null]:");
             entry.reset();
