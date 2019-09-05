@@ -61,5 +61,19 @@ public class DownloadConfig {
         return recoverDownloadWhenStart;
     }
 
+    public void setMax_download_tasks(int max_download_tasks) {
+        this.max_download_tasks = max_download_tasks;
+    }
 
+    public void setMax_download_threads(int max_download_threads) {
+        this.max_download_threads = max_download_threads;
+    }
+
+    public void setMin_operate_interval(int min_operate_interval) {
+        this.min_operate_interval = min_operate_interval;
+    }
+
+    public void setRecoverDownloadWhenStart(boolean recoverDownloadWhenStart) {
+        this.recoverDownloadWhenStart = recoverDownloadWhenStart;
+    }
 }
