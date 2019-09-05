@@ -139,7 +139,7 @@ public class DownloadTask implements ConnectThread.ConnectListener, DownloadThre
                 endPos = (i + 1) * block - 1;
             }
             if (startPos < endPos) {
-                downloadThreads[i] = new DownloadThread(entry.url, i, startPos, endPos, this);
+                downloadThreads[i] = new DownloadThread(entry, i, startPos, endPos, this);
                 downloadStatus[i] = DownloadEntry.DownloadStatus.downloading;
                 mExecutor.execute(downloadThreads[i]);
             } else {
@@ -167,7 +167,7 @@ public class DownloadTask implements ConnectThread.ConnectListener, DownloadThre
         notifyUpdate(entry, DownloadService.NOTIFY_DOWNLOADING);
 
         downloadThreads = new DownloadThread[1];
-        downloadThreads[0] = new DownloadThread(entry.url, 0, 0, 0, this);
+        downloadThreads[0] = new DownloadThread(entry, 0, 0, 0, this);
         downloadStatus = new DownloadEntry.DownloadStatus[1];
         mExecutor.execute(downloadThreads[0]);
     }
@@ -274,7 +274,7 @@ public class DownloadTask implements ConnectThread.ConnectListener, DownloadThre
                     Slog.d(TAG, "DownloadTask==>onProgressChanged()###" + " restart sub-thread " + i);
                     downloadThreads[i].pause();
                     downloadThreads[i] = null;
-                    downloadThreads[i] = new DownloadThread(entry.url, i, startPos, endPos, this);
+                    downloadThreads[i] = new DownloadThread(entry, i, startPos, endPos, this);
                     downloadStatus[i] = DownloadEntry.DownloadStatus.downloading;
                     mExecutor.execute(downloadThreads[i]);
                 } else {
