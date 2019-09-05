@@ -1,6 +1,8 @@
 package com.suntiago.network.network.download;
 
 
+import android.text.TextUtils;
+
 import com.suntiago.network.network.download.DownloadEntry.DownloadStatus;
 import com.suntiago.network.network.utils.Slog;
 
@@ -32,13 +34,13 @@ public class DownloadThread implements Runnable {
 
     private DownloadEntry.DownloadStatus status;
 
-    public DownloadThread(String url, int index, int startPos, int endPos,
+    public DownloadThread(DownloadEntry entry, int index, int startPos, int endPos,
                           DownloadListener listener) {
-        this.url = url;
+        this.url = entry.url;
         this.index = index;
         this.startPos = startPos;
         this.endPos = endPos;
-        this.apkName = url.substring(url.lastIndexOf("/") + 1);
+        this.apkName = TextUtils.isEmpty(entry.name) ? url.substring(url.lastIndexOf("/") + 1) : entry.name;
         this.listener = listener;
         if (startPos == 0 && endPos == 0) {
             isSingleDownload = true;
