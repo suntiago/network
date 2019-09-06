@@ -34,8 +34,8 @@ public class HttpManager {
 
     private static boolean DEBUG = true;
 
-    private static final int CONNECT_TIMEOUT = 12000;
-    private static final int READ_TIMEOUT = 12000;
+    private static final int CONNECT_TIMEOUT = 15000;
+    private static final int READ_TIMEOUT = 15000;
 
     private static OkHttpClient sOkHttpClient = new OkHttpClient();
     public static Converter.Factory sGsonConverterFactory = GsonConverterFactory.create();
