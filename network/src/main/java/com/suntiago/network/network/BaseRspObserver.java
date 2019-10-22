@@ -1,6 +1,7 @@
 package com.suntiago.network.network;
 
 
+import com.google.gson.JsonSyntaxException;
 import com.suntiago.network.network.rsp.BaseResponse;
 import com.suntiago.network.network.utils.Slog;
 
@@ -58,6 +59,8 @@ public class BaseRspObserver<T> extends Subscriber<T> {
         } else if (e instanceof SSLHandshakeException || e instanceof SSLProtocolException) {
             code = ErrorCode.SSLHandshakeException;
         } else if (e instanceof JSONException) {
+            code = ErrorCode.JSON_Exception;
+        } else if(e instanceof JsonSyntaxException){
             code = ErrorCode.JSON_Exception;
         } else {
             code = ErrorCode.OTHER_EXCEPTION;
