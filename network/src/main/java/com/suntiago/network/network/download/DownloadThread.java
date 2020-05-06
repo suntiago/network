@@ -14,6 +14,17 @@ import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * @des Download thread.
@@ -53,6 +64,19 @@ public class DownloadThread implements Runnable {
     public void run() {
         status = DownloadEntry.DownloadStatus.downloading;
         HttpURLConnection connection = null;
+        try {
+            trustAllHttpsCertificates();
+            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        }
         try {
 //            String utf_8url = "";
 //            for (int i = 0; i < url.length(); i++) {
@@ -172,6 +196,30 @@ public class DownloadThread implements Runnable {
                 Slog.d(TAG, "DownloadThread==>run()#####index:" + index +
                         "***" + url + "*****close connection");
             }
+        }
+    }private static void trustAllHttpsCertificates() throws NoSuchAlgorithmException, KeyManagementException {
+        TrustManager[] trustAllCerts = new TrustManager[1];
+        trustAllCerts[0] = (TrustManager) new TrustAllManager();
+        SSLContext sc = SSLContext.getInstance("SSL");
+        sc.init(null, trustAllCerts, null);
+        HttpsURLConnection.setDefaultSSLSocketFactory(
+                sc.getSocketFactory());
+    }
+
+    private static class TrustAllManager implements X509TrustManager {
+        public X509Certificate[] getAcceptedIssuers()
+        {
+            return null;
+        }
+        public void checkServerTrusted(X509Certificate[] certs,
+                                       String authType)
+                throws CertificateException
+        {
+        }
+        public void checkClientTrusted(X509Certificate[] certs,
+                                       String authType)
+                throws CertificateException
+        {
         }
     }
 
